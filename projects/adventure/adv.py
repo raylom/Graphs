@@ -23,8 +23,46 @@ world.printRooms()
 player = Player("Name", world.startingRoom)
 
 traversalPath = []
+visitedGraph = {}
+visited_rooms = set()
+oppositeDirections = {
+    'n' : 's',
+    'e' : 'w',
+    'w' : 'e',
+    's' : 'n'
+}
 
+def isVisitedRoom(graph, startRoomId):
+    # return none if room is unexplored
+    for direction in graph[startRoomId]:
+        if graph[startRoomId][direction] == '?':
+            return None
 
+    # track which rooms need to be walked back
+
+    q= []
+    q.append([startRoomId])
+    visited = set()
+
+    while len(q) > 0:
+        path = q.pop(0)
+        roomId = path[-1]
+
+        if roomId not in visited:
+            visited.add(roomId)
+
+            for direction in graph[roomId]:
+                #room still needs to be explored if None
+                if graph[roomId][direction] == '?':
+                    return path
+
+            for direction in graph[roomId]:
+                newPath = path.copy()
+                roomDirection = graph[roomId][direction]
+                newPath.append(roomDirection)
+                q.append(newPath)
+
+        return None
 
 # TRAVERSAL TEST
 visited_rooms = set()
